@@ -24,8 +24,12 @@
         const ctx = canvas.getContext("2d");
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
+        const lineLength = 100;
+        const earthSpeed = 0.005;
+        const moonSpeed = earthSpeed * 12;
         let earthAngle = 0;
         let moonAngle = 0;
+        let direction = 1;
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -65,11 +69,42 @@
             ctx.arc(moonX, moonY, 10, 0, Math.PI * 2);
             ctx.fill();
 
+            ctx.beginPath();
+            ctx.moveTo(earthX, earthY);
+            ctx.lineTo(earthX + lineLength, earthY);
+            ctx.stroke();
+
+            const lineEndX = earthX + lineLength * Math.cos(earthAngle);
+            const lineEndY = earthY + lineLength * Math.sin(earthAngle);
+            ctx.beginPath();
+            ctx.moveTo(earthX, earthY);
+            ctx.lineTo(lineEndX, lineEndY);
+            ctx.stroke();
+
+            const angleLabel = Math.round(-earthAngle * 180 / Math.PI) % 360;
+            ctx.font = "20px Arial";
+            ctx.fillText(angleLabel + "°", earthX + 25, earthY - 10);
+
+
             // Update angles
-            earthAngle += 0.01;
-            moonAngle += 0.05;
+            earthAngle -= earthSpeed * direction;
+            moonAngle -= moonSpeed * direction;
             requestAnimationFrame(draw);
         }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "a") {
+                direction = 1;
+            } else if (event.key === 's') {
+                direction = 0;
+            } else if (event.key === 'd') {
+                direction = -1;
+            } else if (event.key === 'f') {
+                direction *= 2;
+            } else if (event.key == 'g') {
+                direction /= 2;
+            }
+        });
 
         draw();
     </script>
