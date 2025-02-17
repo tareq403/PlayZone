@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apsidal Precession Animation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            margin: 0;
+        }
+        canvas {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="orbitCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("orbitCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const SPEED_OF_APSIDAL_PRECESSION = 0.000;
+        const SPEED_OF_EARTH_ROTATION = 0.0;
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const a = 130; // Semi-major axis
+        const b = 120; // Semi-minor axis
+        const c = Math.sqrt(a * a - b * b); // Distance from center to focus
+        let angle = 0; // Angle for precession
+        let planetAngle = 0;
+        const speed = SPEED_OF_APSIDAL_PRECESSION; // Speed of precession
+        const monthColors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet", "cyan", "magenta", "lime", "pink", "white"];
+        const monthNames = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+        
+        // Zodiac sign names
+        const zodiacSigns = ["কর্কট", "সিংহ", "কন্যা", "তুলা", "বৃশ্চিক", "ধনু", "মকর", "কুম্ভ", "মীন", "মেষ", "বৃষ", "মিথুন"];
+
+        function drawOrbit() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Calculate precessed orbit center
+            const orbitCenterX = centerX + c * Math.cos(angle);
+            const orbitCenterY = centerY + c * Math.sin(angle);
+            
+            // Calculate Sun position (fixed at one focus of the orbit)
+            const sunX = orbitCenterX - c * Math.cos(angle);
+            const sunY = orbitCenterY - c * Math.sin(angle);
+            
+            // Draw the Sun at one focus
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, 10, 0, Math.PI * 2);
+            ctx.fillStyle = "yellow";
+            ctx.fill();
+
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Draw Zodiac Constellations (Fixed Relative to the Sun)
+            const zodiacRadius = a * 2.1; // Place constellations just outside the Earth's orbit
+            ctx.fillStyle = "white";
+            for (let i = 0; i < 12; i++) {
+                const zodiacAngle = (i * Math.PI * 2) / 12;
+                const zodiacX = zodiacRadius * Math.cos(zodiacAngle);
+                const zodiacY = zodiacRadius * Math.sin(zodiacAngle);
+                ctx.beginPath();
+                ctx.arc(centerX + zodiacX, centerY + zodiacY, 5, 0, Math.PI * 2); // Draw small circle for each constellation
+                ctx.fill();
+                // Draw the zodiac name near the constellation
+                ctx.fillText(zodiacSigns[i], centerX + zodiacX + 24, centerY + zodiacY); // Adjust the offset for readability
+            }
+            
+            ctx.save();
+            ctx.translate(orbitCenterX, orbitCenterY);
+            ctx.rotate(angle);
+
+            // Draw elliptical orbit divided into 12 segments
+            for (let i = 0; i < 12; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.ellipse(0, 0, a, b, 0, (i * Math.PI * 2) / 12, ((i + 1) * Math.PI * 2) / 12);
+                ctx.closePath();
+                ctx.fillStyle = monthColors[i];
+                ctx.globalAlpha = 0.3;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, a, b, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw month names
+            for (let i = 0; i < 12; i++) {
+                const textAngle = (i * Math.PI * 2) / 12 + Math.PI / 12;
+                const textX = (a * 1.1) * Math.cos(textAngle);
+                const textY = (b * 1.1) * Math.sin(textAngle);
+                ctx.fillText(monthNames[i], textX, textY);
+            }
+            
+            // Calculate planet position on orbit relative to orbit center
+            const planetX = a * Math.cos(planetAngle);
+            const planetY = b * Math.sin(planetAngle);
+            
+            // Draw the planet relative to the orbit center
+            ctx.beginPath();
+            ctx.arc(planetX, planetY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = "blue";
+            ctx.fill();
+
+            // Draw the line segment from Earth through the Sun to the constellations
+            
+            // End point of the line (intersection with the zodiac circle)
+            const lineEndX = zodiacRadius * Math.cos(Math.acos(-(planetX+c)/Math.sqrt((planetX+c)*(planetX+c) + planetY*planetY)));
+            const lineEndY = zodiacRadius * Math.sin(Math.asin(-planetY/Math.sqrt((planetX+c)*(planetX+c) + planetY*planetY)));
+            
+            // Draw the line from Earth through the Sun to the constellations (just one line)
+            ctx.translate(-c, 0);
+            ctx.beginPath();
+            ctx.moveTo(planetX+c, planetY); // Start at Earth
+            ctx.lineTo(lineEndX, lineEndY); // Through the Sun
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.restore();
+            
+            ctx.restore();
+
+            // Update angles for motion
+            angle += speed; // Precession rotation
+            planetAngle += SPEED_OF_EARTH_ROTATION; // Planet movement
+            requestAnimationFrame(drawOrbit);
+        }
+
+        drawOrbit();
+    </script>
+</body>
+</html>
