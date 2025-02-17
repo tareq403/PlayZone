@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon Phases Simulation</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .simulation {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 50px auto;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 20%, transparent 60%);
+        }
+        .sun {
+            position: absolute;
+            left: -100px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 80px;
+            background: yellow;
+            border-radius: 50%;
+        }
+        .earth-orbit {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 600px;
+            height: 600px;
+            transform: translate(-100%, -50%);
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+        .earth {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: blue;
+            border-radius: 50%;
+        }
+        .moon-orbit {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 240px;
+            height: 240px;
+            transform: translate(-50%, -50%);
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+        .moon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: gray;
+            border-radius: 50%;
+            box-shadow: inset 12px 0 10px rgba(0, 0, 0, 0.8);
+        }
+        .moon-phase {
+            position: absolute;
+            left: 50%;
+            top: 90%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: gray;
+            border-radius: 50%;
+            box-shadow: inset 15px 0 10px rgba(0, 0, 0, 0.8);
+        }
+        .label {
+            position: absolute;
+            font-size: 14px;
+            color: white;
+            text-shadow: 1px 1px 3px black;
+        }
+    </style>
+</head>
+<body>
+    <h1>চন্দ্র তিথি</h1>
+    <div class="simulation">
+        <div class="sun"></div>
+        <div class="label" style="left: -80px; top: 50%; transform: translateY(-50%);">সূর্য</div>
+        <div class="earth-orbit"></div>
+        <div class="earth"></div>
+        <div class="label" style="left: 190px; top: 190px;">পৃথিবী</div>
+        <div class="moon-orbit"></div>
+        <div class="moon" id="moon"></div>
+        <div class="label" id="moon-label" style="position: absolute;">চাঁদ</div>
+    </div>
+    <div class="label" id="moon-phase-label" style="top: 85%; left: 50%; transform: translateX(-50%);">পৃথিবী থেকে: </div>
+    <div class="moon-phase" id="moon-phase"></div>
+    <script>
+        let angle = 0;
+        const moon = document.getElementById("moon");
+        const moonPhase = document.getElementById("moon-phase");
+        const moonPhaseLabel = document.getElementById("moon-phase-label");
+        const moonLabel = document.getElementById("moon-label");
+        const earthX = 200;
+        const earthY = 200;
+        const orbitRadius = 120;
+        
+        function updateMoonPosition() {
+            angle += Math.PI/150;
+            c_angle = angle + Math.PI;
+            if (angle > 2 * Math.PI) {
+                angle -= 2 * Math.PI;
+            }
+            if (c_angle > 2 * Math.PI) {
+                c_angle -= 2 * Math.PI;
+            }
+            let moonX = earthX + orbitRadius * Math.cos(angle);
+            let moonY = earthY + orbitRadius * Math.sin(angle);
+            moon.style.left = `${moonX - 15}px`;
+            moon.style.top = `${moonY - 15}px`;
+            moonLabel.style.left = `${moonX + 10}px`;
+            moonLabel.style.top = `${moonY}px`;
+            moonLabel.textContent = "চাঁদ";
+            
+            let phase = Math.cos(angle);
+            moon.style.boxShadow = `inset -15px 0 10px rgba(0, 0, 0, 0.8)`;
+            let shadowOffset = (Math.PI - c_angle)/Math.PI * 60;
+            moonPhase.style.boxShadow = `inset ${-shadowOffset}px 0 10px rgba(0, 0, 0, 0.8)`;
+            
+            let phaseNames = ["পূর্ণিমা", "কৃষ্ণ চতুর্থী", "কৃষ্ণ অষ্টমী", "কৃষ্ণ দ্বাদশী", "অমাবস্যা", "শুক্ল চতুর্থী", "শুক্ল অষ্টমী", "শুক্ল দ্বাদশী"];
+            let phaseIndex = Math.round(((Math.acos(phase) / Math.PI) * 4) % 8);
+            moonPhaseLabel.textContent = "পৃথিবী থেকে: " +  phaseNames[phaseIndex];
+            
+            requestAnimationFrame(updateMoonPosition);
+        }
+        updateMoonPosition();
+    </script>
+</body>
+</html>
