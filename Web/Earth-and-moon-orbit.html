@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth and Moon Orbits (Canvas)</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+        }
+        canvas {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="solarSystem" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById("solarSystem");
+        const ctx = canvas.getContext("2d");
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        let earthAngle = 0;
+        let moonAngle = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Sun
+            ctx.fillStyle = "yellow";
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Earth orbit
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 150, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Earth position
+            let earthX = centerX + Math.cos(earthAngle) * 150;
+            let earthY = centerY + Math.sin(earthAngle) * 150;
+            
+            ctx.fillStyle = "blue";
+            ctx.beginPath();
+            ctx.arc(earthX, earthY, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Moon orbit
+            ctx.beginPath();
+            ctx.arc(earthX, earthY, 40, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Moon position
+            let moonX = earthX + Math.cos(moonAngle) * 40;
+            let moonY = earthY + Math.sin(moonAngle) * 40;
+            
+            ctx.fillStyle = "gray";
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Update angles
+            earthAngle += 0.01;
+            moonAngle += 0.05;
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
