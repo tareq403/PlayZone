@@ -74,9 +74,9 @@
             transform: translateX(-50%);
             width: 60px;
             height: 60px;
-            background: gray;
+            background: rgb(30, 30, 15);
             border-radius: 50%;
-            box-shadow: inset 15px 0 10px rgba(0, 0, 0, 0.8);
+            box-shadow: inset 15px 0 10px rgb(2, 2, 255);
         }
         .label {
             position: absolute;
@@ -112,12 +112,8 @@
         
         function updateMoonPosition() {
             angle += Math.PI/360;
-            c_angle = angle + Math.PI;
             if (angle > 2 * Math.PI) {
                 angle -= 2 * Math.PI;
-            }
-            if (c_angle > 2 * Math.PI) {
-                c_angle -= 2 * Math.PI;
             }
             let moonX = earthX + orbitRadius * Math.cos(angle);
             let moonY = earthY + orbitRadius * Math.sin(angle);
@@ -129,11 +125,11 @@
             
             let phase = Math.cos(angle);
             moon.style.boxShadow = `inset -15px 0 10px rgba(0, 0, 0, 0.8)`;
-            let shadowOffset = (Math.PI - c_angle)/Math.PI * 60;
-            moonPhase.style.boxShadow = `inset ${shadowOffset}px 0 10px rgba(0, 0, 0, 0.8)`;
+            let shadowOffset = (Math.PI - angle)/Math.PI * 60;
+            moonPhase.style.boxShadow = `inset ${shadowOffset}px 0 0px rgb(255, 255, 190)`;
             
-            let phaseNames = ["অমাবস্যা", "শুক্ল চতুর্থী", "শুক্ল অষ্টমী", "শুক্ল দ্বাদশী", "পূর্ণিমা", "কৃষ্ণ চতুর্থী", "কৃষ্ণ অষ্টমী", "কৃষ্ণ দ্বাদশী"];
-            let phaseIndex = Math.round((( c_angle / Math.PI) * 4)) % 8;
+            let phaseNames = ["পূর্ণিমা", "কৃষ্ণ চতুর্থী", "কৃষ্ণ অষ্টমী", "কৃষ্ণ দ্বাদশী", "অমাবস্যা", "শুক্ল চতুর্থী", "শুক্ল অষ্টমী", "শুক্ল দ্বাদশী"];
+            let phaseIndex = Math.round((( angle / Math.PI) * 4)) % 8;
             moonPhaseLabel.textContent = "পৃথিবী থেকে: " +  phaseNames[phaseIndex];
             
             requestAnimationFrame(updateMoonPosition);
