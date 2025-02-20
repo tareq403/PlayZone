@@ -30,16 +30,14 @@
         const orbitMin = 150;
         const maxBulge = 25;
         const minBulge = 15;
-        const maxDepression = 6;
-        const minDepression = 2;
+        const maxDepression = 4;
+        const minDepression = 1;
         let moonOrbitRadius = orbitMax;
         let bulgeHeight = minBulge;
         let depressionHeight = maxDepression;
         const moonRadius = 15;
         const NumberOfLongitudes = 6;
 
-        const waterRadiusX = earthRadius + bulgeHeight;
-        const waterRadiusY = earthRadius + depressionHeight;
         let earthSpeedMultiplier = 1;
         const moonSpeed = 0.001;
         let earthSpeed = moonSpeed * earthSpeedMultiplier;
@@ -52,7 +50,10 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             const bulgeAngle = moonAngle + bulgeDiffAngle;
+            const waterRadiusX = earthRadius + bulgeHeight;
+            const waterRadiusY = earthRadius + depressionHeight;
 
             // Tidal bulge
             ctx.fillStyle = "cyan";
