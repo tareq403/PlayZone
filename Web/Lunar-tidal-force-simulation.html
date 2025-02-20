@@ -103,7 +103,8 @@
 
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX + moonOrbitRadius * Math.cos(bulgeAngle), centerY + moonOrbitRadius * Math.sin(bulgeAngle));
+            ctx.lineTo(centerX + moonOrbitRadius * Math.cos(bulgeAngle), 
+                centerY + moonOrbitRadius * Math.sin(bulgeAngle));
             ctx.stroke();
 
             // Update Moon's position
@@ -115,9 +116,13 @@
         function calulateParams() {
             earthSpeed = moonSpeed * earthSpeedMultiplier;
             bulgeDiffAngle = (earthSpeedMultiplier - 1) * Math.PI / (6 * 27);
-            moonOrbitRadius = orbitMax - (orbitMax - orbitMin) * (earthSpeedMultiplier - 1) / (multiplierMax - 1);
-            bulgeHeight = minBulge + (maxBulge - minBulge) * (earthSpeedMultiplier - 1) / (multiplierMax - 1);
-            depressionHeight = maxDepression - (maxDepression - minDepression) * (earthSpeedMultiplier - 1) / (multiplierMax - 1);
+            moonOrbitRadius = orbitMax - (orbitMax - orbitMin) * (
+                earthSpeedMultiplier - 1) / (multiplierMax - 1);
+            bulgeHeight = minBulge + (maxBulge - minBulge) * (
+                earthSpeedMultiplier - 1) / (multiplierMax - 1);
+            depressionHeight = maxDepression - (
+                maxDepression - minDepression) * (
+                earthSpeedMultiplier - 1) / (multiplierMax - 1);
         }
 
         document.addEventListener("keydown", (event) => {
@@ -126,11 +131,14 @@
                 showLongitudes = !showLongitudes;
             } else if (event.key === 'a') {
                 // Make earth spin faster
-                earthSpeedMultiplier = Math.min(multiplierMax, Math.max(1, earthSpeedMultiplier * 2));
+                earthSpeedMultiplier = Math.min(
+                    multiplierMax, Math.max(
+                        1, earthSpeedMultiplier * 2));
                 calulateParams();
             } else if (event.key === 's') {
                 // Make earth spin slower
-                earthSpeedMultiplier = Math.max(1, earthSpeedMultiplier / 2);
+                earthSpeedMultiplier = Math.max(
+                    1, earthSpeedMultiplier / 2);
                 calulateParams();
             } 
         });
