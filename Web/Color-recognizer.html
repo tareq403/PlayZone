@@ -16,21 +16,31 @@
             margin: 20px auto;
             border: 2px solid #000;
         }
+        #predefined-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
         .color-box {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            width: 200px;
             padding: 10px;
-            margin: 5px auto;
             border: 1px solid #000;
-            color: white;
+            text-align: center;
             font-weight: bold;
+        }
+        .color-preview {
+            width: 100px;
+            height: 50px;
+            margin-bottom: 5px;
+            border: 1px solid #000;
         }
         .color-name-input {
             border: none;
             background: transparent;
-            color: white;
             font-weight: bold;
             text-align: center;
             width: 80px;
@@ -112,11 +122,24 @@
             colorData.forEach((color, index) => {
                 const colorBox = document.createElement("div");
                 colorBox.className = "color-box";
-                colorBox.style.backgroundColor = `rgb(${color.rgb.join(",")})`;
-                colorBox.innerHTML = `
-                    <input class="color-name-input" type="text" value="${color.name}" onchange="editColorName(${index}, this.value)">
-                    <button onclick="removeColor(${index})">X</button>
-                `;
+                
+                const colorPreview = document.createElement("div");
+                colorPreview.className = "color-preview";
+                colorPreview.style.backgroundColor = `rgb(${color.rgb.join(",")})`;
+                
+                const colorNameInput = document.createElement("input");
+                colorNameInput.className = "color-name-input";
+                colorNameInput.type = "text";
+                colorNameInput.value = color.name;
+                colorNameInput.onchange = () => editColorName(index, colorNameInput.value);
+                
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "X";
+                removeButton.onclick = () => removeColor(index);
+                
+                colorBox.appendChild(colorPreview);
+                colorBox.appendChild(colorNameInput);
+                colorBox.appendChild(removeButton);
                 container.appendChild(colorBox);
             });
         }
