@@ -16,37 +16,43 @@
             margin: 20px auto;
             border: 2px solid #000;
         }
-        #predefined-colors {
+        .color-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 10px;
             justify-content: center;
-            margin-top: 20px;
+            padding: 10px;
         }
         .color-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px;
+            justify-content: center;
+            width: 120px;
+            height: 80px;
+            padding: 5px;
             border: 1px solid #000;
-            text-align: center;
             font-weight: bold;
+            background-color: #f0f0f0;
         }
         .color-preview {
-            width: 100px;
-            height: 50px;
-            margin-bottom: 5px;
+            width: 30px;
+            height: 30px;
             border: 1px solid #000;
+            margin-bottom: 5px;
         }
         .color-name-input {
             border: none;
             background: transparent;
-            font-weight: bold;
             text-align: center;
+            font-weight: bold;
             width: 80px;
         }
         .color-name-input:focus {
             outline: none;
+        }
+        .color-text {
+            font-size: 12px;
         }
     </style>
 </head>
@@ -57,7 +63,7 @@
     <h3>Predicted Color: <span id="color-name">None</span></h3>
 
     <h2>Predefined Colors</h2>
-    <div id="predefined-colors"></div>
+    <div id="predefined-colors" class="color-grid"></div>
 
     <h2>Add New Color</h2>
     <input type="color" id="new-color-picker">
@@ -122,24 +128,12 @@
             colorData.forEach((color, index) => {
                 const colorBox = document.createElement("div");
                 colorBox.className = "color-box";
-                
-                const colorPreview = document.createElement("div");
-                colorPreview.className = "color-preview";
-                colorPreview.style.backgroundColor = `rgb(${color.rgb.join(",")})`;
-                
-                const colorNameInput = document.createElement("input");
-                colorNameInput.className = "color-name-input";
-                colorNameInput.type = "text";
-                colorNameInput.value = color.name;
-                colorNameInput.onchange = () => editColorName(index, colorNameInput.value);
-                
-                const removeButton = document.createElement("button");
-                removeButton.textContent = "X";
-                removeButton.onclick = () => removeColor(index);
-                
-                colorBox.appendChild(colorPreview);
-                colorBox.appendChild(colorNameInput);
-                colorBox.appendChild(removeButton);
+                colorBox.innerHTML = `
+                    <div class="color-preview" style="background-color: rgb(${color.rgb.join(",")})"></div>
+                    <input class="color-name-input" type="text" value="${color.name}" onchange="editColorName(${index}, this.value)">
+                    <span class="color-text">RGB: ${color.rgb.join(", ")}</span>
+                    <button onclick="removeColor(${index})">X</button>
+                `;
                 container.appendChild(colorBox);
             });
         }
