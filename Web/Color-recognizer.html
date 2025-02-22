@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Recognizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #color-display {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            border: 2px solid #000;
+        }
+        .color-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 200px;
+            padding: 10px;
+            margin: 5px auto;
+            border: 1px solid #000;
+            color: white;
+            font-weight: bold;
+        }
+        .color-name-input {
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            width: 80px;
+        }
+        .color-name-input:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Select a Color</h2>
+    <input type="color" id="color-picker">
+    <div id="color-display"></div>
+    <h3>Predicted Color: <span id="color-name">None</span></h3>
+
+    <h2>Predefined Colors</h2>
+    <div id="predefined-colors"></div>
+
+    <h2>Add New Color</h2>
+    <input type="color" id="new-color-picker">
+    <input type="text" id="new-color-name" placeholder="Color Name">
+    <button onclick="addNewColor()">Add Color</button>
+
+    <script>
+        let colorData = [
+            { name: "Red", rgb: [255, 0, 0] },
+            { name: "Green", rgb: [0, 255, 0] },
+            { name: "Blue", rgb: [0, 0, 255] },
+            { name: "Yellow", rgb: [255, 255, 0] },
+            { name: "Cyan", rgb: [0, 255, 255] },
+            { name: "Magenta", rgb: [255, 0, 255] },
+            { name: "Black", rgb: [0, 0, 0] },
+            { name: "White", rgb: [255, 255, 255] },
+            { name: "Gray", rgb: [128, 128, 128] },
+            { name: "Orange", rgb: [255, 165, 0] },
+            { name: "Purple", rgb: [128, 0, 128] },
+            { name: "Pink", rgb: [255, 192, 203] },
+            { name: "Brown", rgb: [165, 42, 42] }
+        ];
+
+        function hexToRgb(hex) {
+            let bigint = parseInt(hex.substring(1), 16);
+            return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        }
+
+        function euclideanDistance(color1, color2) {
+            return Math.sqrt(
+                Math.pow(color1[0] - color2[0], 2) +
+                Math.pow(color1[1] - color2[1], 2) +
+                Math.pow(color1[2] - color2[2], 2)
+            );
+        }
+
+        function findClosestColor(rgb) {
+            let closestColor = colorData[0].name;
+            let minDistance = Infinity;
+            colorData.forEach(color => {
+                let distance = euclideanDistance(rgb, color.rgb);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestColor = color.name;
+                }
+            });
+            return closestColor;
+        }
+
+        function updatePrediction() {
+            let selectedColor = document.getElementById("color-picker").value;
+            let rgb = hexToRgb(selectedColor);
+            document.getElementById("color-display").style.backgroundColor = selectedColor;
+            document.getElementById("color-name").textContent = findClosestColor(rgb);
+        }
+
+        document.getElementById("color-picker").addEventListener("input", updatePrediction);
+
+        function displayPredefinedColors() {
+            const container = document.getElementById("predefined-colors");
+            container.innerHTML = "";
+            colorData.forEach((color, index) => {
+                const colorBox = document.createElement("div");
+                colorBox.className = "color-box";
+                colorBox.style.backgroundColor = `rgb(${color.rgb.join(",")})`;
+                colorBox.innerHTML = `
+                    <input class="color-name-input" type="text" value="${color.name}" onchange="editColorName(${index}, this.value)">
+                    <button onclick="removeColor(${index})">X</button>
+                `;
+                container.appendChild(colorBox);
+            });
+        }
+
+        function editColorName(index, newName) {
+            colorData[index].name = newName;
+            updatePrediction();
+        }
+
+        function removeColor(index) {
+            colorData.splice(index, 1);
+            displayPredefinedColors();
+            updatePrediction();
+        }
+
+        function addNewColor() {
+            let newColorHex = document.getElementById("new-color-picker").value;
+            let newColorName = document.getElementById("new-color-name").value.trim();
+            if (newColorName) {
+                colorData.push({ name: newColorName, rgb: hexToRgb(newColorHex) });
+                displayPredefinedColors();
+                updatePrediction();
+            }
+        }
+
+        displayPredefinedColors();
+    </script>
+</body>
+</html>
