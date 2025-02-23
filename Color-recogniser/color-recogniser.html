@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Recognizer</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <h2>Select a Color</h2>
+    <input type="color" id="color-picker">
+    <div id="color-display"></div>
+    <h3>Predicted Color: <span id="color-name">None</span></h3>
+
+    <h2>Training (Known) Colors</h2>
+    <div id="predefined-colors" class="color-grid"></div>
+
+    <h2>Add New Training Color</h2>
+    <input type="color" id="new-color-picker">
+    <input type="text" id="new-color-name" placeholder="Color Name">
+    <button onclick="addNewColor()">Add Color</button>
+
+    <script type="text/javascript" src="./js/red_shades.js"></script>
+    <script type="text/javascript" src="./js/pink_shades.js"></script>
+    <script type="text/javascript" src="./js/orange_shades.js"></script>
+    <script type="text/javascript" src="./js/yellow_shades.js"></script>
+    <script type="text/javascript" src="./js/purple_shades.js"></script>
+    <script type="text/javascript" src="./js/green_shades.js"></script>
+    <script type="text/javascript" src="./js/blue_shades.js"></script>
+    <script type="text/javascript" src="./js/brown_shades.js"></script>
+    <script type="text/javascript" src="./js/white_shades.js"></script>
+    <script type="text/javascript" src="./js/grey_shades.js"></script>
+    <script>
+        let colorData = [
+            { name: "Red", rgb: [255, 0, 0] },
+            { name: "Blue", rgb: [0, 0, 255] },
+            { name: "Cyan", rgb: [0, 255, 255] },
+            { name: "Magenta", rgb: [255, 0, 255] },
+            { name: "Black", rgb: [0, 0, 0] },
+            { name: "White", rgb: [255, 255, 255] },
+            { name: "Yellow", rgb: [255, 255, 0] },
+        ]
+        .concat(redShades)
+        .concat(pinkShades)
+        .concat(orangeShades)
+        .concat(yellowShades)
+        .concat(purpleShades)
+        .concat(greenShades)
+        .concat(blueShades)
+        .concat(brownShades)
+        .concat(whiteShades)
+        .concat(greyShades)
+        ;
+    </script>
+    <script type="text/javascript" src="./js/color_recognise.js"></script>
+</body>
+</html>
