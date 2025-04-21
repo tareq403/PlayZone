@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wave vs Particle Motion with Trail</title>
+  <style>
+    body {
+      background: #0e1e2b;
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<canvas id="waveCanvas"></canvas>
+
+<script>
+  const canvas = document.getElementById("waveCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const numParticles = 100;
+  const amplitude = 40;
+  const wavelength = 100;
+  const speed = 2;
+
+  const middleIndex = Math.floor(numParticles / 2);
+  const trail = [];
+  const maxTrailLength = 100;
+
+  for (let i = 0; i < numParticles; i++) {
+    const x = (canvas.width / numParticles) * i;
+    const y = canvas.height / 2;
+    particles.push({ x: x, baseX: x, baseY: y, angle: 0 });
+  }
+
+  function animate() {
+    // Clear canvas with slight opacity for fading trail effect
+    ctx.fillStyle = "rgba(14, 30, 43, 0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let highlightedX = 0;
+    let highlightedY = 0;
+
+    particles.forEach((p, i) => {
+      // Advance angle
+      p.angle += 0.05;
+
+      // Wave and circular motion
+      const wavePhase = (p.baseX / wavelength) + (performance.now() / 1000) * speed;
+      const dy = Math.sin(wavePhase) * amplitude;
+
+      const radius = 10;
+      const dx = Math.cos(p.angle) * radius;
+      const circleDy = Math.sin(p.angle) * radius;
+
+      const finalX = p.baseX + dx;
+      const finalY = p.baseY + dy + circleDy;
+
+      // Store middle particle position for trail
+      if (i === middleIndex) {
+        highlightedX = finalX;
+        highlightedY = finalY;
+      }
+
+      // Draw particle
+      ctx.beginPath();
+      if (i === middleIndex) {
+        // Outer ring
+        ctx.strokeStyle = "#ffff00aa";
+        ctx.lineWidth = 2;
+        ctx.arc(finalX, finalY, 10, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Highlighted particle
+        ctx.beginPath();
+        ctx.fillStyle = "#ffff00";
+        ctx.arc(finalX, finalY, 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = "#66ccff";
+        ctx.arc(finalX, finalY, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // Update trail for the center particle
+    trail.push({ x: highlightedX, y: highlightedY });
+    if (trail.length > maxTrailLength) trail.shift();
+
+    // Draw the trail
+    for (let i = 0; i < trail.length; i++) {
+      const point = trail[i];
+      ctx.beginPath();
+      const alpha = i / trail.length; // Fading
+      ctx.fillStyle = `rgba(255, 255, 0, ${alpha * 0.8})`;
+      ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+</body>
+</html>
